@@ -7,19 +7,17 @@ import { ShortcutsScreen } from './shortcuts';
 
 const ShortcutsPage: FC = () => (
   <Consumer>
-    {({
-      api: {
-        getShortcutKeys,
-        getAddonsShortcutLabels,
-        setShortcut,
-        restoreDefaultShortcut,
-        restoreAllDefaultShortcuts,
-      },
-    }) => (
+    {({ api }) => (
       <ShortcutsScreen
-        shortcutKeys={getShortcutKeys()}
-        addonsShortcutLabels={getAddonsShortcutLabels()}
-        {...{ setShortcut, restoreDefaultShortcut, restoreAllDefaultShortcuts }}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore TODO: handle case where the getShortcutKeys is undefined
+        shortcutKeys={api?.getShortcutKeys()}
+        addonsShortcutLabels={api?.getAddonsShortcutLabels()}
+        {...{
+          setShortcut: api?.setShortcut,
+          restoreDefaultShortcut: api?.restoreDefaultShortcut,
+          restoreAllDefaultShortcuts: api?.restoreAllDefaultShortcuts,
+        }}
       />
     )}
   </Consumer>

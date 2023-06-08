@@ -49,7 +49,7 @@ export const Shortcut: FC<{ keys: string[] }> = ({ keys }) => (
 );
 
 export const useMenu = (
-  api: API,
+  api: API | undefined,
   showToolbar: boolean,
   isFullscreen: boolean,
   showPanel: boolean,
@@ -57,14 +57,14 @@ export const useMenu = (
   enableShortcuts: boolean
 ) => {
   const theme = useTheme();
-  const shortcutKeys = api.getShortcutKeys();
+  const shortcutKeys = api?.getShortcutKeys();
 
   const about = useMemo(
     () => ({
       id: 'about',
       title: 'About your Storybook',
-      onClick: () => api.navigateToSettingsPage('/settings/about'),
-      right: api.versionUpdateAvailable() && <Badge status="positive">Update</Badge>,
+      onClick: () => api?.navigateToSettingsPage('/settings/about'),
+      right: api?.versionUpdateAvailable() && <Badge status="positive">Update</Badge>,
     }),
     [api]
   );
@@ -73,7 +73,7 @@ export const useMenu = (
     () => ({
       id: 'release-notes',
       title: 'Release notes',
-      onClick: () => api.navigateToSettingsPage('/settings/release-notes'),
+      onClick: () => api?.navigateToSettingsPage('/settings/release-notes'),
     }),
     [api]
   );
@@ -82,22 +82,22 @@ export const useMenu = (
     () => ({
       id: 'shortcuts',
       title: 'Keyboard shortcuts',
-      onClick: () => api.navigateToSettingsPage('/settings/shortcuts'),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.shortcutsPage} /> : null,
+      onClick: () => api?.navigateToSettingsPage('/settings/shortcuts'),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.shortcutsPage ?? []} /> : null,
       style: {
         borderBottom: `4px solid ${theme.appBorderColor}`,
       },
     }),
-    [api, enableShortcuts, shortcutKeys.shortcutsPage, theme.appBorderColor]
+    [api, enableShortcuts, shortcutKeys?.shortcutsPage, theme.appBorderColor]
   );
 
   const sidebarToggle = useMemo(
     () => ({
       id: 'S',
       title: 'Show sidebar',
-      onClick: () => api.toggleNav(),
+      onClick: () => api?.toggleNav(),
       active: showNav,
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.toggleNav} /> : null,
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.toggleNav ?? []} /> : null,
       left: showNav ? <Icons icon="check" /> : null,
     }),
     [api, enableShortcuts, shortcutKeys, showNav]
@@ -107,9 +107,9 @@ export const useMenu = (
     () => ({
       id: 'T',
       title: 'Show toolbar',
-      onClick: () => api.toggleToolbar(),
+      onClick: () => api?.toggleToolbar(),
       active: showToolbar,
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.toolbar} /> : null,
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.toolbar ?? []} /> : null,
       left: showToolbar ? <Icons icon="check" /> : null,
     }),
     [api, enableShortcuts, shortcutKeys, showToolbar]
@@ -119,9 +119,9 @@ export const useMenu = (
     () => ({
       id: 'A',
       title: 'Show addons',
-      onClick: () => api.togglePanel(),
+      onClick: () => api?.togglePanel(),
       active: showPanel,
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.togglePanel} /> : null,
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.togglePanel ?? []} /> : null,
       left: showPanel ? <Icons icon="check" /> : null,
     }),
     [api, enableShortcuts, shortcutKeys, showPanel]
@@ -131,8 +131,8 @@ export const useMenu = (
     () => ({
       id: 'D',
       title: 'Change addons orientation',
-      onClick: () => api.togglePanelPosition(),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.panelPosition} /> : null,
+      onClick: () => api?.togglePanelPosition(),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.panelPosition ?? []} /> : null,
     }),
     [api, enableShortcuts, shortcutKeys]
   );
@@ -141,9 +141,9 @@ export const useMenu = (
     () => ({
       id: 'F',
       title: 'Go full screen',
-      onClick: () => api.toggleFullscreen(),
+      onClick: () => api?.toggleFullscreen(),
       active: isFullscreen,
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.fullScreen} /> : null,
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.fullScreen ?? []} /> : null,
       left: isFullscreen ? <Icons icon="check" /> : null,
     }),
     [api, enableShortcuts, shortcutKeys, isFullscreen]
@@ -153,8 +153,8 @@ export const useMenu = (
     () => ({
       id: '/',
       title: 'Search',
-      onClick: () => api.focusOnUIElement(focusableUIElements.storySearchField),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.search} /> : null,
+      onClick: () => api?.focusOnUIElement(focusableUIElements.storySearchField),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.search ?? []} /> : null,
     }),
     [api, enableShortcuts, shortcutKeys]
   );
@@ -163,8 +163,8 @@ export const useMenu = (
     () => ({
       id: 'up',
       title: 'Previous component',
-      onClick: () => api.jumpToComponent(-1),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.prevComponent} /> : null,
+      onClick: () => api?.jumpToComponent(-1),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.prevComponent ?? []} /> : null,
     }),
     [api, enableShortcuts, shortcutKeys]
   );
@@ -173,8 +173,8 @@ export const useMenu = (
     () => ({
       id: 'down',
       title: 'Next component',
-      onClick: () => api.jumpToComponent(1),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.nextComponent} /> : null,
+      onClick: () => api?.jumpToComponent(1),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.nextComponent ?? []} /> : null,
     }),
     [api, enableShortcuts, shortcutKeys]
   );
@@ -183,8 +183,8 @@ export const useMenu = (
     () => ({
       id: 'prev',
       title: 'Previous story',
-      onClick: () => api.jumpToStory(-1),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.prevStory} /> : null,
+      onClick: () => api?.jumpToStory(-1),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.prevStory ?? []} /> : null,
     }),
     [api, enableShortcuts, shortcutKeys]
   );
@@ -193,8 +193,8 @@ export const useMenu = (
     () => ({
       id: 'next',
       title: 'Next story',
-      onClick: () => api.jumpToStory(1),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.nextStory} /> : null,
+      onClick: () => api?.jumpToStory(1),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.nextStory ?? []} /> : null,
     }),
     [api, enableShortcuts, shortcutKeys]
   );
@@ -203,16 +203,16 @@ export const useMenu = (
     () => ({
       id: 'collapse',
       title: 'Collapse all',
-      onClick: () => api.collapseAll(),
-      right: enableShortcuts ? <Shortcut keys={shortcutKeys.collapseAll} /> : null,
+      onClick: () => api?.collapseAll(),
+      right: enableShortcuts ? <Shortcut keys={shortcutKeys?.collapseAll ?? []} /> : null,
     }),
     [api, enableShortcuts, shortcutKeys]
   );
 
   const getAddonsShortcuts = useCallback(() => {
-    const addonsShortcuts = api.getAddonsShortcuts();
+    const addonsShortcuts = api?.getAddonsShortcuts();
     const keys = shortcutKeys as any;
-    return Object.entries(addonsShortcuts)
+    return Object.entries(addonsShortcuts ?? {})
       .filter(([_, { showInMenu }]) => showInMenu)
       .map(([actionName, { label, action }]) => ({
         id: actionName,
@@ -225,7 +225,7 @@ export const useMenu = (
   return useMemo(
     () => [
       about,
-      ...(api.releaseNotesVersion() ? [releaseNotes] : []),
+      ...(api?.releaseNotesVersion() ? [releaseNotes] : []),
       shortcuts,
       sidebarToggle,
       toolbarToogle,
