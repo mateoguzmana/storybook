@@ -24,7 +24,7 @@ export const prevent = (e: SyntheticEvent) => {
 export const get = memoize(1000)((id: string, dataset: Dataset) => dataset[id]);
 export const getParent = memoize(1000)((id: string, dataset: Dataset) => {
   const item = get(id, dataset);
-  return item && item.type !== 'root' ? get(item.parent, dataset) : undefined;
+  return item && item.type !== 'root' ? get(item.parent ?? '', dataset) : undefined;
 });
 export const getParents = memoize(1000)((id: string, dataset: Dataset): Item[] => {
   const parent = getParent(id, dataset);
@@ -40,6 +40,8 @@ export const getDescendantIds = memoize(1000)(
     return children.reduce((acc, childId) => {
       const child = data[childId];
       if (!child || (skipLeafs && (child.type === 'story' || child.type === 'docs'))) return acc;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore FIXME childId needs to be type never
       acc.push(childId, ...getDescendantIds(data, childId, skipLeafs));
       return acc;
     }, []);
@@ -47,7 +49,7 @@ export const getDescendantIds = memoize(1000)(
 );
 
 export function getPath(item: Item, ref: RefType): string[] {
-  const parent = item.type !== 'root' && item.parent ? ref.index[item.parent] : null;
+  const parent = item.type !== 'root' && item.parent ? ref.index?.[item.parent] : null;
   if (parent) return [...getPath(parent, ref), parent.name];
   return ref.id === DEFAULT_REF_ID ? [] : [ref.title || ref.id];
 }
@@ -94,7 +96,7 @@ export const getStateType = (
 export const isAncestor = (element?: Element, maybeAncestor?: Element): boolean => {
   if (!element || !maybeAncestor) return false;
   if (element === maybeAncestor) return true;
-  return isAncestor(element.parentElement, maybeAncestor);
+  return element.parentElement ? isAncestor(element.parentElement, maybeAncestor) : false;
 };
 
 export const removeNoiseFromName = (storyName: string) => storyName.replaceAll(/(\s|-|_)/gi, '');

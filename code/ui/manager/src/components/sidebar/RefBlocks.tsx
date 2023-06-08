@@ -108,7 +108,7 @@ export const ErrorBlock: FC<{ error?: Error }> = ({ error }) => (
         <WithTooltip
           tooltip={
             <ErrorDisplay>
-              <ErrorFormatter error={error} />
+              <ErrorFormatter error={error as Error} />
             </ErrorDisplay>
           }
         >
