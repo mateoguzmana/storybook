@@ -77,7 +77,7 @@ export interface ReleaseNotesProps {
   didHitMaxWaitTime: boolean;
   isLoaded: boolean;
   setLoaded: (isLoaded: boolean) => void;
-  version: string;
+  version?: string;
 }
 
 const PureReleaseNotesScreen: FC<ReleaseNotesProps> = ({
@@ -94,7 +94,7 @@ const PureReleaseNotesScreen: FC<ReleaseNotesProps> = ({
       <Iframe
         isLoaded={isLoaded}
         onLoad={() => setLoaded(true)}
-        src={getIframeUrl(version)}
+        src={version ? getIframeUrl(version) : undefined}
         title={`Release notes for Storybook version ${version}`}
       />
     )}

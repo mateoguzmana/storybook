@@ -9,7 +9,7 @@ import NotificationList from '../components/notifications/NotificationList';
 const mapper = ({ state, api }: Combo) => {
   return {
     notifications: state.notifications,
-    clearNotification: api.clearNotification,
+    clearNotification: api?.clearNotification,
   };
 };
 

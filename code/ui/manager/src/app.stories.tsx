@@ -39,7 +39,7 @@ const ThemeStack = styled.div(
 );
 
 function setPreviewInitialized({ api }: Combo) {
-  api.setPreviewInitialized();
+  api?.setPreviewInitialized();
   return {};
 }
 
