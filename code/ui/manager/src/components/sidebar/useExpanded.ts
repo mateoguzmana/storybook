@@ -52,7 +52,10 @@ const initializeExpanded = ({
       ? getAncestorIds(data, highlightedRef.current?.itemId)
       : [];
   return [...rootIds, ...highlightedAncestors].reduce<ExpandedState>(
-    (acc, id) => Object.assign(acc, { [id]: id in initialExpanded ? initialExpanded[id] : true }),
+    (acc, id) =>
+      Object.assign(acc, {
+        [id]: initialExpanded && id in initialExpanded ? initialExpanded[id] : true,
+      }),
     {}
   );
 };

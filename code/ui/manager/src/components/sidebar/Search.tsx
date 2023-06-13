@@ -169,8 +169,8 @@ export const Search = React.memo<{
 
   const selectStory = useCallback(
     (id: string, refId: string) => {
-      if (api) api.selectStory(id, undefined, { ref: refId !== DEFAULT_REF_ID && refId });
-      inputRef.current.blur();
+      if (api) api.selectStory(id, undefined, { ref: refId !== DEFAULT_REF_ID ? refId : '' });
+      inputRef.current?.blur();
       showAllComponents(false);
     },
     [api, inputRef, showAllComponents, DEFAULT_REF_ID]
@@ -196,7 +196,7 @@ export const Search = React.memo<{
       const distinctResults = (fuse.search(input) as SearchResult[]).filter(({ item }) => {
         if (
           !(item.type === 'component' || item.type === 'docs' || item.type === 'story') ||
-          resultIds.has(item.parent)
+          (item.parent && resultIds.has(item.parent))
         )
           return false;
         resultIds.add(item.id);
@@ -244,7 +244,7 @@ export const Search = React.memo<{
             return { ...changes, inputValue: '', isOpen: true, selectedItem: null };
           }
           // When pressing escape a second time, blur the input and return to the tree view
-          inputRef.current.blur();
+          inputRef.current?.blur();
           return { ...changes, isOpen: false, selectedItem: null };
         }
 
@@ -263,12 +263,12 @@ export const Search = React.memo<{
           }
           if (isClearType(changes.selectedItem)) {
             changes.selectedItem.clearLastViewed();
-            inputRef.current.blur();
+            inputRef.current?.blur();
             // Nothing to see anymore, so return to the tree view
             return { isOpen: false };
           }
           if (isCloseType(changes.selectedItem)) {
-            inputRef.current.blur();
+            inputRef.current?.blur();
             // Return to the tree view
             return { isOpen: false };
           }
@@ -291,8 +291,11 @@ export const Search = React.memo<{
   return (
     <Downshift<DownshiftItem>
       initialInputValue={initialQuery}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore TODO: fix stateReducer type
       stateReducer={stateReducer}
-      // @ts-expect-error (Converted from ts-ignore)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore TODO: FIXME
       itemToString={(result) => result?.item?.name || ''}
       scrollIntoView={(e) => scrollIntoView(e)}
     >
@@ -314,13 +317,19 @@ export const Search = React.memo<{
 
         const lastViewed = !input && getLastViewed();
         if (lastViewed && lastViewed.length) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore TODO: fix reduce types
           results = lastViewed.reduce((acc, { storyId, refId }) => {
             const data = dataset.hash[refId];
             if (data && data.index && data.index[storyId]) {
               const story = data.index[storyId];
               const item = story.type === 'story' ? data.index[story.parent] : story;
               // prevent duplicates
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore TODO: fix rest.item types
               if (!acc.some((res) => res.item.refId === refId && res.item.id === item.id)) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore TODO: fix item types
                 acc.push({ item: searchItem(item, dataset.hash[refId]), matches: [], score: 0 });
               }
             }

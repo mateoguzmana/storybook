@@ -89,7 +89,7 @@ const AboutScreen: FC<{
   latest: State['versions']['latest'];
   current: State['versions']['current'];
 }> = ({ latest = null, current }) => {
-  const canUpdate = latest && semver.gt(latest.version, current.version);
+  const canUpdate = latest && current && semver.gt(latest.version, current.version);
 
   let updateMessage;
   if (latest) {
@@ -116,7 +116,7 @@ const AboutScreen: FC<{
     <Container>
       <Header>
         <StorybookIcon />
-        Storybook {current.version}
+        Storybook {current?.version}
       </Header>
 
       {updateMessage}
@@ -136,7 +136,7 @@ const AboutScreen: FC<{
             </SubheadingLink>
           </Subheader>
           <DocumentWrapper>
-            <Markdown>{latest.info.plain}</Markdown>
+            <Markdown>{latest?.info?.plain ?? ''}</Markdown>
           </DocumentWrapper>
         </Fragment>
       ) : (

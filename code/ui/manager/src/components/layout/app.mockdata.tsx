@@ -85,7 +85,7 @@ class PlaceholderClock extends Component<{ color: string }, { count: number }> {
     count: 1,
   };
 
-  interval: ReturnType<typeof setTimeout>;
+  interval?: ReturnType<typeof setTimeout>;
 
   componentDidMount() {
     this.interval = setInterval(() => {

@@ -56,8 +56,8 @@ export const Description = styled.div({
 
 export type ValidationStates = 'valid' | 'error' | 'warn';
 
-export const TextInput: FC<ComponentProps<typeof Form.Input> & { valid: ValidationStates }> =
-  styled(Form.Input)<{ valid: ValidationStates }>(
+export const TextInput: FC<ComponentProps<typeof Form.Input> & { valid?: ValidationStates }> =
+  styled(Form.Input)<{ valid?: ValidationStates }>(
     ({ valid, theme }) =>
       valid === 'error'
         ? {
@@ -80,7 +80,7 @@ export const Fade = keyframes`
   50% { opacity: 1; }
 `;
 
-export const SuccessIcon = styled(Icons)<{ valid: string }>(
+export const SuccessIcon = styled(Icons)<{ valid?: string }>(
   ({ valid, theme }) =>
     valid === 'valid'
       ? {
@@ -132,17 +132,17 @@ export type Feature = keyof typeof shortcutLabels;
 // Shortcuts that cannot be configured
 const fixedShortcuts = ['escape'];
 
-function toShortcutState(shortcutKeys: ShortcutsScreenProps['shortcutKeys']) {
+function toShortcutState(shortcutKeys: ShortcutsScreenProps['shortcutKeys']): Record<Feature, any> {
   return Object.entries(shortcutKeys).reduce(
-    (acc, [feature, shortcut]: [Feature, string]) =>
+    (acc, [feature, shortcut]: any) =>
       fixedShortcuts.includes(feature) ? acc : { ...acc, [feature]: { shortcut, error: false } },
     {} as Record<Feature, any>
   );
 }
 
 export interface ShortcutsScreenState {
-  activeFeature: Feature;
-  successField: Feature;
+  activeFeature?: Feature;
+  successField?: Feature;
   shortcutKeys: Record<Feature, any>;
   addonsShortcutLabels?: Record<string, string>;
 }
@@ -150,9 +150,9 @@ export interface ShortcutsScreenState {
 export interface ShortcutsScreenProps {
   shortcutKeys: Record<Feature, any>;
   addonsShortcutLabels?: Record<string, string>;
-  setShortcut: Function;
-  restoreDefaultShortcut: Function;
-  restoreAllDefaultShortcuts: Function;
+  setShortcut?: Function;
+  restoreDefaultShortcut?: Function;
+  restoreAllDefaultShortcuts?: Function;
 }
 
 class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenState> {
@@ -164,7 +164,7 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
       // The initial shortcutKeys that come from props are the defaults/what was saved
       // As the user interacts with the page, the state stores the temporary, unsaved shortcuts
       // This object also includes the error attached to each shortcut
-      shortcutKeys: toShortcutState(props.shortcutKeys),
+      shortcutKeys: toShortcutState(props.shortcutKeys) as Record<Feature, any>,
       addonsShortcutLabels: props.addonsShortcutLabels,
     };
   }
@@ -192,7 +192,7 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
     );
 
     return this.setState({
-      shortcutKeys: { ...shortcutKeys, [activeFeature]: { shortcut, error } },
+      shortcutKeys: { ...shortcutKeys, [activeFeature as Feature]: { shortcut, error } },
     });
   };
 
@@ -211,7 +211,7 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
   onBlur = async () => {
     const { shortcutKeys, activeFeature } = this.state;
 
-    if (shortcutKeys[activeFeature]) {
+    if (activeFeature && shortcutKeys[activeFeature]) {
       const { shortcut, error } = shortcutKeys[activeFeature];
       if (!shortcut || error) {
         return this.restoreDefault();
@@ -223,17 +223,23 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
 
   saveShortcut = async () => {
     const { activeFeature, shortcutKeys } = this.state;
-
     const { setShortcut } = this.props;
-    await setShortcut(activeFeature, shortcutKeys[activeFeature].shortcut);
-    this.setState({ successField: activeFeature });
+
+    if (activeFeature) {
+      if (setShortcut) await setShortcut(activeFeature, shortcutKeys[activeFeature].shortcut);
+
+      this.setState({ successField: activeFeature });
+    }
   };
 
   restoreDefaults = async () => {
     const { restoreAllDefaultShortcuts } = this.props;
 
-    const defaultShortcuts = await restoreAllDefaultShortcuts();
-    return this.setState({ shortcutKeys: toShortcutState(defaultShortcuts) });
+    if (restoreAllDefaultShortcuts) {
+      const defaultShortcuts = await restoreAllDefaultShortcuts();
+
+      this.setState({ shortcutKeys: toShortcutState(defaultShortcuts) });
+    }
   };
 
   restoreDefault = async () => {
@@ -241,13 +247,15 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
 
     const { restoreDefaultShortcut } = this.props;
 
-    const defaultShortcut = await restoreDefaultShortcut(activeFeature);
-    return this.setState({
-      shortcutKeys: {
-        ...shortcutKeys,
-        ...toShortcutState({ [activeFeature]: defaultShortcut } as Record<Feature, any>),
-      },
-    });
+    if (activeFeature && restoreDefaultShortcut) {
+      const defaultShortcut = await restoreDefaultShortcut(activeFeature);
+      this.setState({
+        shortcutKeys: {
+          ...shortcutKeys,
+          ...toShortcutState({ [activeFeature]: defaultShortcut } as Record<Feature, any>),
+        },
+      });
+    }
   };
 
   displaySuccessMessage = (activeElement: Feature) => {
@@ -257,7 +265,7 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
       : undefined;
   };
 
-  displayError = (activeElement: Feature): ValidationStates => {
+  displayError = (activeElement: Feature): ValidationStates | undefined => {
     const { activeFeature, shortcutKeys } = this.state;
     return activeElement === activeFeature && shortcutKeys[activeElement].error === true
       ? 'error'
@@ -266,16 +274,18 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
 
   renderKeyInput = () => {
     const { shortcutKeys, addonsShortcutLabels } = this.state;
-    const arr = Object.entries(shortcutKeys).map(([feature, { shortcut }]: [Feature, any]) => (
+    const arr = Object.entries(shortcutKeys).map(([feature, { shortcut }]) => (
       <Row key={feature}>
-        <Description>{shortcutLabels[feature] || addonsShortcutLabels[feature]}</Description>
+        <Description>
+          {shortcutLabels[feature as Feature] || addonsShortcutLabels?.[feature]}
+        </Description>
 
         <TextInput
           spellCheck="false"
-          valid={this.displayError(feature)}
+          valid={this.displayError(feature as Feature)}
           className="modalInput"
           onBlur={this.onBlur}
-          onFocus={this.onFocus(feature)}
+          onFocus={this.onFocus(feature as Feature)}
           // @ts-expect-error (Converted from ts-ignore)
           onKeyDown={this.onKeyDown}
           value={shortcut ? shortcutToHumanString(shortcut) : ''}
@@ -283,7 +293,7 @@ class ShortcutsScreen extends Component<ShortcutsScreenProps, ShortcutsScreenSta
           readOnly
         />
 
-        <SuccessIcon valid={this.displaySuccessMessage(feature)} icon="check" />
+        <SuccessIcon valid={this.displaySuccessMessage(feature as Feature)} icon="check" />
       </Row>
     ));
 

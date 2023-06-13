@@ -41,7 +41,6 @@ export default {
         pathname: locationProp.pathname || '/',
         search: locationProp.search || '',
         hash: locationProp.hash || '',
-        // @ts-expect-error (invalid input)
         state: null,
         key: 'default',
       };
@@ -83,6 +82,8 @@ export const NoTabs = () => (
       return (
         <Preview
           {...previewProps}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore TODO: fix preview type, api can be undefined
           api={{ ...api, getElements: () => ({}) }}
           entry={{
             ...(previewProps.entry as StoryEntry),
@@ -100,6 +101,8 @@ export const HideFullscreen = () => (
       return (
         <Preview
           {...previewProps}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore TODO: fix preview type, api can be undefined
           api={{ ...api, getElements: () => ({}) }}
           entry={{
             ...(previewProps.entry as StoryEntry),
@@ -117,6 +120,8 @@ export const HideAllDefaultTools = () => (
       return (
         <Preview
           {...previewProps}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore TODO: fix preview type, api can be undefined
           api={{ ...api, getElements: () => ({}) }}
           entry={{
             ...(previewProps.entry as StoryEntry),
@@ -140,6 +145,8 @@ export const HideAllDefaultTools = () => (
 export const WithCanvasTab = () => (
   <Consumer>
     {({ api }: Combo) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore TODO: fix preview type, api can be undefined
       return <Preview {...previewProps} api={{ ...api, getElements: () => ({}) }} />;
     }}
   </Consumer>
@@ -154,6 +161,8 @@ export const WithTabsHidden = () => (
         <Preview
           {...previewProps}
           options={{ ...previewProps.options, showTabs: false }}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore TODO: fix preview type, api can be undefined
           api={{ ...api, getElements: () => ({}) }}
         />
       );

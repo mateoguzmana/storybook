@@ -135,7 +135,7 @@ export const Ref: FC<RefType & RefProps> = React.memo(function Ref(props) {
   );
 
   const onSelectStoryId = useCallback(
-    (storyId: string) => api && api.selectStory(storyId, undefined, { ref: !isMain && refId }),
+    (storyId: string) => api && api.selectStory(storyId, undefined, { ref: !isMain ? refId : '' }),
     [api, isMain, refId]
   );
 
@@ -155,7 +155,7 @@ export const Ref: FC<RefType & RefProps> = React.memo(function Ref(props) {
       )}
       {isExpanded && (
         <Wrapper data-title={title} isMain={isMain}>
-          {state === 'auth' && <AuthBlock id={refId} loginUrl={loginUrl} />}
+          {state === 'auth' && <AuthBlock id={refId} loginUrl={loginUrl ?? ''} />}
           {state === 'error' && <ErrorBlock error={indexError} />}
           {state === 'loading' && <LoaderBlock isMain={isMain} />}
           {state === 'empty' && <EmptyBlock isMain={isMain} />}
@@ -164,8 +164,8 @@ export const Ref: FC<RefType & RefProps> = React.memo(function Ref(props) {
               isBrowsing={isBrowsing}
               isMain={isMain}
               refId={refId}
-              data={index}
-              docsMode={docsOptions.docsMode}
+              data={index!}
+              docsMode={docsOptions.docsMode!}
               selectedStoryId={selectedStoryId}
               onSelectStoryId={onSelectStoryId}
               highlightedRef={highlightedRef}

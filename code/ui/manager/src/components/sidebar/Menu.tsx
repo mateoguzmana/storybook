@@ -20,6 +20,7 @@ const Icon = styled(Icons)(sharedStyles, ({ theme }) => ({
   color: theme.color.secondary,
 }));
 
+// @ts-expect-error (TODO)
 export const SidebarIconButton: FC<
   ComponentProps<typeof Button> & { highlighted: boolean; active: boolean }
 > = styled(IconButton)<
@@ -108,7 +109,7 @@ const SidebarMenuList: FC<{
 export const SidebarMenu: FC<{
   menu: MenuList;
   isHighlighted?: boolean;
-}> = ({ menu, isHighlighted }) => {
+}> = ({ menu, isHighlighted = false }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   return (
     <WithTooltip

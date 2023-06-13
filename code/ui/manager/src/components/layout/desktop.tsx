@@ -18,7 +18,7 @@ export interface DesktopProps {
     render: ComponentType;
   }[];
   options: State['layout'];
-  viewMode: string;
+  viewMode?: string;
 }
 
 const Desktop = Object.assign(

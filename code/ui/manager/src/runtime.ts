@@ -18,7 +18,8 @@ const { FEATURES, CONFIG_TYPE } = global;
 class ReactProvider extends Provider {
   private addons: AddonStore;
 
-  // @ts-expect-error Unused, possibly remove, leaving, because it could be accessed even though it is private
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore Unused, possibly remove, leaving, because it could be accessed even though it is private
   private channel: Channel;
 
   private serverChannel?: Channel;
@@ -58,9 +59,10 @@ class ReactProvider extends Provider {
 const { document } = global;
 
 const rootEl = document.getElementById('root');
-renderStorybookUI(rootEl, new ReactProvider());
+if (rootEl) renderStorybookUI(rootEl, new ReactProvider());
 
 // Apply all the globals
-Object.keys(Keys).forEach((key: keyof typeof Keys) => {
-  global[Keys[key]] = values[key];
+Object.keys(Keys).forEach((key) => {
+  const k = key as keyof typeof Keys;
+  global[Keys[k]] = values[k];
 });

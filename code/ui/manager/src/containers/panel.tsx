@@ -12,11 +12,11 @@ const createPanelActions = memoize(1)((api) => ({
 }));
 
 const mapper = ({ state, api }: Combo) => ({
-  panels: api.getStoryPanels(),
-  selectedPanel: api.getSelectedPanel(),
+  panels: api?.getStoryPanels(),
+  selectedPanel: api?.getSelectedPanel(),
   panelPosition: state.layout.panelPosition,
   actions: createPanelActions(api),
-  shortcuts: api.getShortcutKeys(),
+  shortcuts: api?.getShortcutKeys(),
 });
 
 const Panel: FC<any> = (props) => (

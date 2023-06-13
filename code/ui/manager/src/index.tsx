@@ -45,10 +45,12 @@ const Main: FC<{ provider: Provider }> = ({ provider }) => {
           docsOptions={global?.DOCS_OPTIONS || {}}
         >
           {({ state, api }: Combo) => {
-            const panelCount = Object.keys(api.getPanels()).length;
-            const story = api.getData(state.storyId, state.refId);
+            const panelCount = Object.keys(api?.getPanels() ?? {}).length;
+            const story = api?.getData(state.storyId, state.refId);
             const isLoading = story
-              ? !!state.refs[state.refId] && !state.refs[state.refId].previewInitialized
+              ? state.refId &&
+                !!state.refs[state.refId] &&
+                !state.refs[state.refId].previewInitialized
               : !state.previewInitialized;
 
             return (

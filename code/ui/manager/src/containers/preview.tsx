@@ -13,7 +13,7 @@ export type Item = StoriesHash[keyof StoriesHash];
 const splitTitleAddExtraSpace = (input: string) =>
   input.split('/').join(' / ').replace(/\s\s/, ' ');
 
-const getDescription = (item: Item) => {
+const getDescription = (item?: Item) => {
   if (item?.type === 'story' || item?.type === 'docs') {
     const { title, name } = item;
     return title && name ? splitTitleAddExtraSpace(`${title} - ${name} ⋅ Storybook`) : 'Storybook';
@@ -24,7 +24,7 @@ const getDescription = (item: Item) => {
 
 const mapper = ({ api, state }: Combo) => {
   const { layout, location, customQueryParams, storyId, refs, viewMode, path, refId } = state;
-  const entry = api.getData(storyId, refId);
+  const entry = api?.getData(storyId, refId);
 
   return {
     api,
@@ -46,6 +46,7 @@ const PreviewConnected = React.memo(function PreviewConnected(props: {
   withLoader: boolean;
 }) {
   return (
+    // @ts-expect-error FIXME: there is a prop with incompatible type
     <Consumer filter={mapper}>{(fromState) => <Preview {...props} {...fromState} />}</Consumer>
   );
 });

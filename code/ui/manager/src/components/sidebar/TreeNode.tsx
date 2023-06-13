@@ -163,7 +163,14 @@ export const GroupNode: FunctionComponent<
 });
 
 export const ComponentNode: FunctionComponent<ComponentProps<typeof BranchNode>> = React.memo(
-  function ComponentNode({ theme, children, isExpanded, isExpandable, isSelected, ...props }) {
+  function ComponentNode({
+    theme,
+    children,
+    isExpanded = false,
+    isExpandable,
+    isSelected,
+    ...props
+  }) {
     return (
       <BranchNode isExpandable={isExpandable} tabIndex={-1} {...props}>
         {isExpandable && <CollapseIcon isExpanded={isExpanded} />}

@@ -99,7 +99,7 @@ export const AuthBlock: FC<{ loginUrl: string; id: string }> = ({ loginUrl, id }
   );
 };
 
-export const ErrorBlock: FC<{ error: Error }> = ({ error }) => (
+export const ErrorBlock: FC<{ error?: Error }> = ({ error }) => (
   <Contained>
     <Spaced>
       <TextStyle>
@@ -108,7 +108,7 @@ export const ErrorBlock: FC<{ error: Error }> = ({ error }) => (
         <WithTooltip
           tooltip={
             <ErrorDisplay>
-              <ErrorFormatter error={error} />
+              <ErrorFormatter error={error as Error} />
             </ErrorDisplay>
           }
         >

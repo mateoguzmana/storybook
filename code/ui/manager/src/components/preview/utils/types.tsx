@@ -5,7 +5,7 @@ import type { StoryId } from '@storybook/types';
 export type ViewMode = State['viewMode'];
 
 export interface PreviewProps {
-  api: API;
+  api?: API;
   viewMode: ViewMode;
   refs: State['refs'];
   storyId: StoryId;
